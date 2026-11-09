@@ -1,0 +1,64 @@
+package classTask;
+
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class Google_link_resposecode {
+
+	ChromeDriver driver;
+	
+	@BeforeEach
+	public void setup()
+	{
+		driver = new ChromeDriver();
+		driver.get("https://www.google.com/");
+		driver.manage().window().maximize();
+	}
+	@Test
+	public void google() throws Exception
+	{
+		List<WebElement> links = driver.findElements(By.tagName("a"));
+		System.out.println("Number of links = "+links.size());
+		
+		for(WebElement li:links)
+		{
+			String url = li.getAttribute("href");
+			verify(url);
+		}
+	}
+	private void verify(String url) throws Exception {
+		
+		try {
+		URI obj=new URI(url);
+		URL value=obj.toURL();
+		HttpURLConnection con=(HttpURLConnection) value.openConnection();
+		
+		int responsecode=con.getResponseCode();
+		
+		if(responsecode==200)
+		{
+			System.out.println("valid link------------"+url);
+		}
+		else if(responsecode==404)
+		{
+			System.out.println("Broken link----------"+url);
+		}
+		else
+		{
+			System.out.println("Other responsecode");
+		}
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+}
